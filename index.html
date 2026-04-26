@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduTrack Pro — Student Management System</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
+            <div class="brand-text">
+                <span class="brand-name">EduTrack</span>
+                <span class="brand-sub">Pro</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">MAIN</div>
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <i class="fas fa-chart-pie"></i><span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-page="students">
+                <i class="fas fa-users"></i><span>Students</span>
+            </a>
+            <a href="#" class="nav-item" data-page="attendance">
+                <i class="fas fa-calendar-check"></i><span>Attendance</span>
+            </a>
+            <a href="#" class="nav-item" data-page="marks">
+                <i class="fas fa-chart-bar"></i><span>Marks & Grades</span>
+            </a>
+            <a href="#" class="nav-item" data-page="subjects">
+                <i class="fas fa-book-open"></i><span>Subjects</span>
+            </a>
+            <div class="nav-section-label">MANAGEMENT</div>
+            <a href="#" class="nav-item" data-page="reports">
+                <i class="fas fa-file-alt"></i><span>Reports</span>
+            </a>
+            <a href="#" class="nav-item" data-page="notifications">
+                <i class="fas fa-bell"></i><span>Notifications</span>
+                <span class="badge" id="notifBadge">0</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-card">
+                <div class="admin-avatar">AD</div>
+                <div class="admin-info">
+                    <div class="admin-name">Admin</div>
+                    <div class="admin-role">Super Admin</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+        <div class="topbar-title" id="pageTitle">Dashboard</div>
+        <div class="topbar-actions">
+            <div class="search-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="globalSearch" placeholder="Search students…" autocomplete="off" />
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            <button class="icon-btn" title="Notifications"><i class="fas fa-bell"></i></button>
+            <button class="add-btn" id="topAddBtn"><i class="fas fa-plus"></i> Add Student</button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="mainContent">
+
+        <!-- ═══════════════════════ DASHBOARD PAGE ═══════════════════════ -->
+        <section class="page active" id="page-dashboard">
+            <div class="welcome-banner">
+                <div class="welcome-text">
+                    <h1>Welcome back, Admin! 👋</h1>
+                    <p>Here's an overview of your institution today.</p>
+                </div>
+                <div class="welcome-art">
+                    <div class="art-circle c1"></div>
+                    <div class="art-circle c2"></div>
+                    <i class="fas fa-university welcome-icon"></i>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card s1">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="statTotal">0</div>
+                        <div class="stat-label">Total Students</div>
+                    </div>
+                    <div class="stat-trend up"><i class="fas fa-arrow-up"></i> Live</div>
+                </div>
+                <div class="stat-card s2">
+                    <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="statBtech">0</div>
+                        <div class="stat-label">B.Tech Students</div>
+                    </div>
+                </div>
+                <div class="stat-card s3">
+                    <div class="stat-icon"><i class="fas fa-flask"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="statMtech">0</div>
+                        <div class="stat-label">M.Tech Students</div>
+                    </div>
+                </div>
+                <div class="stat-card s4">
+                    <div class="stat-icon"><i class="fas fa-percentage"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="statAttendance">0%</div>
+                        <div class="stat-label">Avg Attendance</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-row">
+                <div class="dash-card wide">
+                    <div class="dash-card-header">
+                        <h3>Branch-wise Distribution</h3>
+                    </div>
+                    <div class="branch-bars" id="branchBars"></div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <h3>Recent Students</h3>
+                    </div>
+                    <div class="recent-list" id="recentList">
+                        <div class="empty-state-sm">No students yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-row">
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <h3>Top Performers</h3>
+                    </div>
+                    <div class="top-list" id="topList">
+                        <div class="empty-state-sm">No data yet</div>
+                    </div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <h3>Attendance Alerts</h3>
+                    </div>
+                    <div class="alert-list" id="alertList">
+                        <div class="empty-state-sm">All good!</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════ STUDENTS PAGE ═══════════════════════ -->
+        <section class="page" id="page-students">
+            <div class="page-header">
+                <div>
+                    <h2>Students</h2>
+                    <p>Manage all enrolled students</p>
+                </div>
+                <div class="page-actions">
+                    <select id="filterProgram" class="filter-sel">
+                        <option value="">All Programs</option>
+                        <option value="B.Tech">B.Tech</option>
+                        <option value="M.Tech">M.Tech</option>
+                        <option value="MBA">MBA</option>
+                        <option value="MCA">MCA</option>
+                        <option value="Ph.D">Ph.D</option>
+                    </select>
+                    <select id="filterYear" class="filter-sel">
+                        <option value="">All Years</option>
+                        <option value="1">Year 1</option>
+                        <option value="2">Year 2</option>
+                        <option value="3">Year 3</option>
+                        <option value="4">Year 4</option>
+                    </select>
+                    <select id="filterBranch" class="filter-sel">
+                        <option value="">All Branches</option>
+                    </select>
+                    <button class="add-btn" id="addStudentBtn"><i class="fas fa-plus"></i> Add Student</button>
+                </div>
+            </div>
+
+            <div class="view-toggle">
+                <button class="vt-btn active" id="viewGrid"><i class="fas fa-th-large"></i></button>
+                <button class="vt-btn" id="viewList"><i class="fas fa-list"></i></button>
+            </div>
+
+            <div class="student-grid" id="studentGrid"></div>
+            <div class="student-table-wrap hidden" id="studentTableWrap">
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>Roll ID</th>
+                            <th>Name</th>
+                            <th>Program</th>
+                            <th>Branch</th>
+                            <th>Year</th>
+                            <th>CGPA</th>
+                            <th>Attendance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody"></tbody>
+                </table>
+            </div>
+            <div class="empty-state" id="studentsEmpty">
+                <i class="fas fa-user-plus"></i>
+                <h3>No students found</h3>
+                <p>Click "Add Student" to get started</p>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════ ATTENDANCE PAGE ═══════════════════════ -->
+        <section class="page" id="page-attendance">
+            <div class="page-header">
+                <div>
+                    <h2>Attendance</h2>
+                    <p>Track & manage student attendance</p>
+                </div>
+                <div class="page-actions">
+                    <input type="date" id="attendanceDate" class="filter-sel" />
+                    <select id="attBranch" class="filter-sel">
+                        <option value="">All Branches</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="att-grid" id="attGrid">
+                <div class="empty-state"><i class="fas fa-calendar-check"></i>
+                    <h3>No students</h3>
+                    <p>Add students first</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════ MARKS PAGE ═══════════════════════ -->
+        <section class="page" id="page-marks">
+            <div class="page-header">
+                <div>
+                    <h2>Marks & Grades</h2>
+                    <p>View and update student marks</p>
+                </div>
+                <div class="page-actions">
+                    <select id="marksStudentSel" class="filter-sel">
+                        <option value="">Select Student</option>
+                    </select>
+                    <select id="marksSemSel" class="filter-sel">
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </div>
+            </div>
+            <div id="marksContent">
+                <div class="empty-state"><i class="fas fa-chart-bar"></i>
+                    <h3>Select a student</h3>
+                    <p>Choose from above to view marks</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════ SUBJECTS PAGE ═══════════════════════ -->
+        <section class="page" id="page-subjects">
+            <div class="page-header">
+                <div>
+                    <h2>Subjects</h2>
+                    <p>Manage branch-wise subjects</p>
+                </div>
+                <div class="page-actions">
+                    <select id="subjectBranchSel" class="filter-sel">
+                        <option value="">Select Branch</option>
+                    </select>
+                    <select id="subjectSemSel" class="filter-sel">
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                    <button class="add-btn" id="addSubjectBtn"><i class="fas fa-plus"></i> Add Subject</button>
+                </div>
+            </div>
+            <div id="subjectsContent">
+                <div class="empty-state"><i class="fas fa-book-open"></i>
+                    <h3>Select a branch</h3>
+                    <p>Choose branch and semester to manage subjects</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════ REPORTS PAGE ═══════════════════════ -->
+        <section class="page" id="page-reports">
+            <div class="page-header">
+                <div>
+                    <h2>Reports</h2>
+                    <p>Analytics & Insights</p>
+                </div>
+            </div>
+            <div class="reports-grid">
+                <div class="report-card" id="reportOverall">
+                    <h3><i class="fas fa-chart-pie"></i> Overall Performance</h3>
+                    <div id="overallStats"></div>
+                </div>
+                <div class="report-card" id="reportBranch">
+                    <h3><i class="fas fa-code-branch"></i> Branch Report</h3>
+                    <div id="branchStats"></div>
+                </div>
+                <div class="report-card" id="reportAttendance">
+                    <h3><i class="fas fa-calendar"></i> Attendance Summary</h3>
+                    <div id="attStats"></div>
+                </div>
+                <div class="report-card" id="reportGrade">
+                    <h3><i class="fas fa-star"></i> Grade Distribution</h3>
+                    <div id="gradeStats"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════ NOTIFICATIONS PAGE ═══════════════════════ -->
+        <section class="page" id="page-notifications">
+            <div class="page-header">
+                <div>
+                    <h2>Notifications</h2>
+                    <p>System alerts and updates</p>
+                </div>
+                <button class="outline-btn" id="clearNotifs"><i class="fas fa-trash"></i> Clear All</button>
+            </div>
+            <div id="notifList">
+                <div class="empty-state"><i class="fas fa-bell-slash"></i>
+                    <h3>No notifications</h3>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ═══════════ ADD/EDIT STUDENT MODAL ═══════════ -->
+    <div class="modal-overlay" id="studentModal">
+        <div class="modal large">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Student</h2>
+                <button class="modal-close" id="closeStudentModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-tabs">
+                    <button class="ftab active" data-tab="basic">Basic Info</button>
+                    <button class="ftab" data-tab="academic">Academic</button>
+                    <button class="ftab" data-tab="contact">Contact & Docs</button>
+                </div>
+
+                <div class="ftab-content active" id="ftab-basic">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name *</label>
+                            <input type="text" id="fFirstName" placeholder="Enter first name" />
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name *</label>
+                            <input type="text" id="fLastName" placeholder="Enter last name" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Gender *</label>
+                            <select id="fGender">
+                                <option value="">Select</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+                            <input type="date" id="fDob" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Blood Group</label>
+                            <select id="fBlood">
+                                <option value="">Select</option>
+                                <option>A+</option>
+                                <option>A-</option>
+                                <option>B+</option>
+                                <option>B-</option>
+                                <option>O+</option>
+                                <option>O-</option>
+                                <option>AB+</option>
+                                <option>AB-</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="fCategory">
+                                <option value="">Select</option>
+                                <option>General</option>
+                                <option>OBC</option>
+                                <option>SC</option>
+                                <option>ST</option>
+                                <option>EWS</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group full">
+                        <label>Photo URL (optional)</label>
+                        <input type="text" id="fPhoto" placeholder="https://..." />
+                    </div>
+                </div>
+
+                <div class="ftab-content" id="ftab-academic">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Program *</label>
+                            <select id="fProgram">
+                                <option value="">Select Program</option>
+                                <option>B.Tech</option>
+                                <option>M.Tech</option>
+                                <option>MBA</option>
+                                <option>MCA</option>
+                                <option>Ph.D</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Branch *</label>
+                            <select id="fBranch">
+                                <option value="">Select Branch</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Year *</label>
+                            <select id="fYear">
+                                <option value="">Select</option>
+                                <option value="1">Year 1</option>
+                                <option value="2">Year 2</option>
+                                <option value="3">Year 3</option>
+                                <option value="4">Year 4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Semester *</label>
+                            <select id="fSemester">
+                                <option value="">Select</option>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5">Semester 5</option>
+                                <option value="6">Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Batch / Academic Year *</label>
+                            <select id="fBatch">
+                                <option value="">Select Batch</option>
+                                <option>2020-2024</option>
+                                <option>2021-2025</option>
+                                <option>2022-2026</option>
+                                <option>2023-2027</option>
+                                <option>2024-2028</option>
+                                <option>2025-2029</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Section</label>
+                            <select id="fSection">
+                                <option value="">Select</option>
+                                <option>A</option>
+                                <option>B</option>
+                                <option>C</option>
+                                <option>D</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Admission Type</label>
+                            <select id="fAdmType">
+                                <option>Regular</option>
+                                <option>Lateral</option>
+                                <option>Management</option>
+                                <option>NRI</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Scholarship</label>
+                            <select id="fScholarship">
+                                <option>None</option>
+                                <option>Merit</option>
+                                <option>Need-based</option>
+                                <option>Government</option>
+                                <option>Institutional</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group full">
+                        <label>Previous Institution</label>
+                        <input type="text" id="fPrevInst" placeholder="School / College name" />
+                    </div>
+                </div>
+
+                <div class="ftab-content" id="ftab-contact">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="fEmail" placeholder="student@email.com" />
+                        </div>
+                        <div class="form-group">
+                            <label>Phone *</label>
+                            <input type="tel" id="fPhone" placeholder="+91 00000 00000" />
+                        </div>
+                    </div>
+                    <div class="form-group full">
+                        <label>Address</label>
+                        <textarea id="fAddress" rows="2" placeholder="Full address…"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Guardian Name</label>
+                            <input type="text" id="fGuardian" placeholder="Parent/Guardian name" />
+                        </div>
+                        <div class="form-group">
+                            <label>Guardian Phone</label>
+                            <input type="tel" id="fGuardianPhone" placeholder="+91 00000 00000" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Aadhar No.</label>
+                            <input type="text" id="fAadhar" placeholder="XXXX XXXX XXXX" />
+                        </div>
+                        <div class="form-group">
+                            <label>College ID (auto-gen)</label>
+                            <input type="text" id="fRollId" placeholder="Auto-generated" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="outline-btn" id="cancelStudentModal">Cancel</button>
+                <button class="add-btn" id="saveStudentBtn"><i class="fas fa-save"></i> Save Student</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ VIEW STUDENT MODAL ═══════════ -->
+    <div class="modal-overlay" id="viewModal">
+        <div class="modal xlarge">
+            <div class="modal-header">
+                <h2>Student Profile</h2>
+                <button class="modal-close" id="closeViewModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="viewModalBody"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════ ADD SUBJECT MODAL ═══════════ -->
+    <div class="modal-overlay" id="subjectModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="subjectModalTitle">Add Subject</h2>
+                <button class="modal-close" id="closeSubjectModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Subject Name *</label>
+                    <input type="text" id="sName" placeholder="e.g. Data Structures" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Subject Code *</label>
+                        <input type="text" id="sCode" placeholder="CS301" />
+                    </div>
+                    <div class="form-group">
+                        <label>Credits</label>
+                        <input type="number" id="sCredits" placeholder="3" min="1" max="6" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="sType">
+                            <option>Theory</option>
+                            <option>Lab</option>
+                            <option>Project</option>
+                            <option>Elective</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Faculty</label>
+                        <input type="text" id="sFaculty" placeholder="Prof. Name" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="outline-btn" id="cancelSubjectModal">Cancel</button>
+                <button class="add-btn" id="saveSubjectBtn"><i class="fas fa-save"></i> Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ MARKS EDIT MODAL ═══════════ -->
+    <div class="modal-overlay" id="marksModal">
+        <div class="modal large">
+            <div class="modal-header">
+                <h2>Edit Marks</h2>
+                <button class="modal-close" id="closeMarksModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="marksModalBody"></div>
+            <div class="modal-footer">
+                <button class="outline-btn" id="cancelMarksModal">Cancel</button>
+                <button class="add-btn" id="saveMarksBtn"><i class="fas fa-save"></i> Save Marks</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ TOAST ═══════════ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ═══════════ CONFIRM DIALOG ═══════════ -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal small">
+            <div class="modal-header danger">
+                <h2><i class="fas fa-exclamation-triangle"></i> Confirm Delete</h2>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMsg">Are you sure you want to delete this student? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="outline-btn" id="confirmNo">Cancel</button>
+                <button class="danger-btn" id="confirmYes">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
